@@ -23,17 +23,14 @@
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "netcoreapp3.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Users\\Josh\\Documents\\nuget packages": {},
-          "https://api.nuget.org/v3/index.json": {},
-          "https://teamcity.monogame.net/guestAuth/app/nuget/feed/_Root/default/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -44,8 +41,8 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "dependencies": {
             "Humanizer.Core": {
               "target": "Package",
@@ -61,7 +58,7 @@
             },
             "MonoGame.Framework.DesktopGL": {
               "target": "Package",
-              "version": "[3.8.1.2078-develop, )"
+              "version": "[3.8.0.1641, )"
             },
             "TextCopy": {
               "target": "Package",

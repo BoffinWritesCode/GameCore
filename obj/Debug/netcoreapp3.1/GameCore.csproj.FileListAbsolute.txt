@@ -1,8 +1,10 @@
-C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.csprojAssemblyReference.cache
-C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.AssemblyInfoInputs.cache
-C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.AssemblyInfo.cs
-C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.dll
-C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.pdb
 C:\Users\Josh\Documents\My Projects\GameCore\bin\Debug\netcoreapp3.1\GameCore.deps.json
 C:\Users\Josh\Documents\My Projects\GameCore\bin\Debug\netcoreapp3.1\GameCore.dll
 C:\Users\Josh\Documents\My Projects\GameCore\bin\Debug\netcoreapp3.1\GameCore.pdb
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.csproj.AssemblyReference.cache
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.AssemblyInfoInputs.cache
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.AssemblyInfo.cs
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.csproj.CoreCompileInputs.cache
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.dll
+C:\Users\Josh\Documents\My Projects\GameCore\obj\Debug\netcoreapp3.1\GameCore.pdb

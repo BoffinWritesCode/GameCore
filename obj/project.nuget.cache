@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "BqhgpGaBCZRWYZ03UZc743AN/Cfk4AwAHEARrMXEdg4nX03CHlM2yxuM6KRSBOAsG3rlxLoeLk55nBua4cZbRQ==",
+  "dgSpecHash": "rDbIrcC0XBIuAd+qs57Bt6qz44+OmUxmLq97wYwAMFCM3JcpYNasBstpAsqt/fJCIsMk1tgTr2BxyJPxWeBRxg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Josh\\Documents\\My Projects\\GameCore\\GameCore.csproj",
   "expectedPackageFiles": [
@@ -11,9 +11,8 @@
     "C:\\Users\\Josh\\.nuget\\packages\\monogame.extended.content.pipeline\\3.8.0\\monogame.extended.content.pipeline.3.8.0.nupkg.sha512",
     "C:\\Users\\Josh\\.nuget\\packages\\monogame.extended.graphics\\3.8.0\\monogame.extended.graphics.3.8.0.nupkg.sha512",
     "C:\\Users\\Josh\\.nuget\\packages\\monogame.extended.tiled\\3.8.0\\monogame.extended.tiled.3.8.0.nupkg.sha512",
-    "C:\\Users\\Josh\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.1.2078-develop\\monogame.framework.desktopgl.3.8.1.2078-develop.nupkg.sha512",
+    "C:\\Users\\Josh\\.nuget\\packages\\monogame.framework.desktopgl\\3.8.0.1641\\monogame.framework.desktopgl.3.8.0.1641.nupkg.sha512",
     "C:\\Users\\Josh\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
     "C:\\Users\\Josh\\.nuget\\packages\\textcopy\\5.0.2\\textcopy.5.0.2.nupkg.sha512"
   ],
   "logs": []
