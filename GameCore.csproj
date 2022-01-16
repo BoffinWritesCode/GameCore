@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon />
+    <Win32Resource />
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="packages\**" />
+    <EmbeddedResource Remove="packages\**" />
+    <None Remove="packages\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="CppNet.dll" />
+    <None Remove="libmojoshader_64.dll" />
+    <None Remove="mgfxc.deps.json" />
+    <None Remove="mgfxc.dll" />
+    <None Remove="mgfxc.exe" />
+    <None Remove="mgfxc.pdb" />
+    <None Remove="mgfxc.runtimeconfig.dev.json" />
+    <None Remove="mgfxc.runtimeconfig.json" />
+    <None Remove="SharpDX.D3DCompiler.dll" />
+    <None Remove="SharpDX.D3DCompiler.xml" />
+    <None Remove="SharpDX.dll" />
+    <None Remove="SharpDX.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <TrimmerRootAssembly Include="Microsoft.Xna.Framework.Content.ContentTypeReader" Visible="false" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Humanizer.Core" Version="2.13.14" />
+    <PackageReference Include="MonoGame.Extended" Version="3.8.0" />
+    <PackageReference Include="MonoGame.Extended.Content.Pipeline" Version="3.8.0" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.2078-develop" />
+    <PackageReference Include="TextCopy" Version="5.0.2" />
+  </ItemGroup>
+  <Target Name="SpicNSpan" AfterTargets="Clean">
+    <!-- Remove obj folder -->
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" />
+    <!-- Remove bin folder -->
+    <RemoveDir Directories="$(BaseOutputPath)" />
+  </Target>
+</Project>
