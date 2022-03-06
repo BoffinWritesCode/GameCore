@@ -45,7 +45,8 @@ namespace GameCore.UI.Elements
                 {
                     if (MyToggleGroup != null)
                     {
-                        MyToggleGroup.ToggleTo(this);
+                        MyToggleGroup.UntoggleCurrent();
+                        MyToggleGroup.SetAsToggled(this);
                     }
                     OnToggleOn?.Invoke();
                     if (!_canBeToggledOffByUser) DoesInputCheck = false;

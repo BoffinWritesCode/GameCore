@@ -17,6 +17,8 @@ namespace GameCore.UI.Elements
 
         public override void Draw()
         {
+            if (Sprite == null) return;
+
             RectangleF rect = CalculateRect();
             TextureInfo info = Sprite.GetTextureInfo();
 

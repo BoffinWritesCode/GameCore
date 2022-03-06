@@ -4,9 +4,13 @@ using System.Text;
 
 namespace GameCore.Utility.DropTables
 {
+    /// <summary>
+    /// Dropper interface.
+    /// </summary>
+    /// <typeparam name="T">The type to "drop"</typeparam>
     public interface IDropper<T>
     {
-        IEnumerable<DropResult<T>> GetDropResults(Random random, IEnumerable<DynamicModifier<T>> modifiers = null);
-        IEnumerable<DropChance<T>> GetDropChances(IEnumerable<DynamicModifier<T>> modifiers = null);
+        void Drop(Random random, Dictionary<T, int> resultDictionary);
+        void Chances(Dictionary<T, float> chanceDictionary, float cumulativeMultiplier);
     }
 }

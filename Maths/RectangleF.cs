@@ -98,6 +98,16 @@ namespace GameCore.Maths
                 rect.Top <= Bottom;
         }
 
+        public bool IntersectsLineSegment(Vector2 lineStart, Vector2 lineEnd)
+        {
+            if (Contains(lineStart) || Contains(lineEnd)) return true;
+
+            return MathExtras.LineSegmentsIntersect(lineStart, lineEnd, TopLeft, BottomLeft) ||
+                MathExtras.LineSegmentsIntersect(lineStart, lineEnd, TopLeft, TopRight) ||
+                MathExtras.LineSegmentsIntersect(lineStart, lineEnd, TopRight, BottomRight) ||
+                MathExtras.LineSegmentsIntersect(lineStart, lineEnd, BottomLeft, BottomRight);
+        }
+
         public bool Contains(Vector2 position)
         {
             return position.X >= Left && position.X <= Right && position.Y >= Top && position.Y <= Bottom;
@@ -117,8 +127,9 @@ namespace GameCore.Maths
             return new RectangleF(Left + amount.X, Top + amount.Y, Width, Height);
         }
 
-        public RectangleF Expand(Vector2 amount)
+        public RectangleF Expand(Vector2 amount, bool fromCenter = false)
         {
+            if (fromCenter) return new RectangleF(Left - amount.X * 0.5f, Top - amount.Y * 0.5f, Width + amount.X, Height + amount.Y);
             return new RectangleF(Left, Top, Width + amount.X, Height + amount.Y);
         }
 
@@ -142,6 +153,8 @@ namespace GameCore.Maths
         {
             return new RectangleF(left, top, right - left, bottom - top);
         }
+
+        public static RectangleF FromEdges(Vector2 topLeft, Vector2 bottomRight) => FromEdges(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 
         public override bool Equals(object obj)
         {

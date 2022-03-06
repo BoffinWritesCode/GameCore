@@ -9,8 +9,18 @@ namespace GameCore.UI.Elements
 {
     public enum AxisLayoutMode
     {
+        /// <summary>
+        /// The children will be resized to fit into the parent. No scrolling would be needed.
+        /// </summary>
         StretchToFitAllInParentsSize,
-        SetChildSize
+        /// <summary>
+        /// The children will all be a set size (they will stretch in the alternative axis, the ChildSize value only represents one axis.
+        /// </summary>
+        SetChildSize,
+        /// <summary>
+        /// The children themselves control their size. They must be anchored to the top left and have their size specified for this to work.
+        /// </summary>
+        ChildrenControlTheirSize
     }
 
     public enum GridLayoutMode

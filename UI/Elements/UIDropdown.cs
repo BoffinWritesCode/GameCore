@@ -226,7 +226,7 @@ namespace GameCore.UI.Elements
         {
             _animator?.Update();
 
-            if (!IgnoreMouse && CalculateRect().Contains(GameInput.MousePosition))
+            if (!ClickThrough && CalculateRect().Contains(GameInput.MousePosition))
             {
                 UIInputManager.SetForemostElement(this);
             }

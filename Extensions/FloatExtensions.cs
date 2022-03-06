@@ -11,5 +11,10 @@ namespace GameCore
         {
             return new Vector2(MathF.Cos(angle), MathF.Sin(angle));
         }
+
+        public static bool IsZero(this float value, float epsilon)
+        {
+            return MathF.Abs(value) < epsilon;
+        }
     }
 }

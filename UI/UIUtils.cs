@@ -101,6 +101,12 @@ namespace GameCore.UI
             element.OnMouseExit += (UIElement e) => Mouse.SetCursor(MouseCursor.Arrow);
         }
 
+        public static void SetupCursorOnHoverWithCondition(UIElement element, MouseCursor hoverCursor, Func<bool> condition)
+        {
+            element.OnMouseEnter += (UIElement e) => { if (condition()) Mouse.SetCursor(hoverCursor); else Mouse.SetCursor(MouseCursor.Arrow); };
+            element.OnMouseExit += (UIElement e) => { Mouse.SetCursor(MouseCursor.Arrow); };
+        }
+
         public static void DrawNineSlicePanelStretched(RectangleF rect, ISprite sprite, Color color, int borderTop, int borderRight, int borderBottom, int borderLeft, bool drawMiddle = true)
         {
             TextureInfo info = sprite.GetTextureInfo();

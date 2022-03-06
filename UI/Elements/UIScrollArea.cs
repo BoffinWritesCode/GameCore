@@ -105,6 +105,8 @@ namespace GameCore.UI.Elements
 
             foreach (var child in ScrollElement.Children)
             {
+                if (!child.Active) continue;
+
                 RectangleF area = child.CalculateRect();
 
                 // perhaps this would be better if it broke? can we assume that once the first child isn't visible, the rest wont be?

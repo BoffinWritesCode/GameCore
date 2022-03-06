@@ -14,6 +14,7 @@ namespace GameCore.UI.Elements
     public class UISceneBase : UIElement, IDisposable
     {
         public ISubScene Scene { get; set; }
+        public bool UsesMouseSystem { get; set; } = true;
 
         private Rectangle _prevScreenArea;
 
@@ -35,6 +36,8 @@ namespace GameCore.UI.Elements
 
         public override void Update()
         {
+            if (!Active) return;
+
             UIInputManager.SetCurrentInputParent(this);
 
             if (Scene != null && Scene.ScreenArea != _prevScreenArea)
@@ -66,6 +69,8 @@ namespace GameCore.UI.Elements
 
         public override void Draw()
         {
+            if (!Active) return;
+
             Engine.SpriteBatch.Begin(rasterizerState: ScissorTesting.SetScissorAndGetRasterizer(), samplerState: Settings.SamplerState);
 
             base.Draw();

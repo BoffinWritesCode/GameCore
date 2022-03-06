@@ -50,6 +50,13 @@ namespace GameCore.Scenes
             return null;
         }
 
+        public T GetCurrentSceneAs<T>() where T : class, IScene
+        {
+            if (CurrentDrawingScene is T conv) return conv;
+
+            return null;
+        }
+
         public void Update() { foreach (var scene in SceneList) scene.Update(); }
         public void Draw() 
         {

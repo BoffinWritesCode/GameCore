@@ -6,6 +6,9 @@ namespace GameCore
 {
     public static class Debugging
     {
-        public static List<string> QueuedLines = new List<string>();
+        public static void WriteLine(object obj)
+        {
+            System.Diagnostics.Debug.WriteLine(obj);
+        }
     }
 }

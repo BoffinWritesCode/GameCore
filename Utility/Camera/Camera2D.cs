@@ -19,6 +19,8 @@ namespace GameCore.Utility.Camera
         /// </summary>
         public bool UseFullWindow { get; set; } = true;
 
+        public bool PixelPerfectPosition { get; set; }
+
         public Vector2 Position { get; set; }
         public float Rotation { get; set; }
         public float Scale { get; set; } = 1f;
@@ -70,22 +72,13 @@ namespace GameCore.Utility.Camera
             return Position - (screenOver2 / Scale);
         }
 
-        public Vector2 MouseInWorld()
+        public Vector2 MouseInWorld() => ScreenPointToWorld(GameInput.MousePosition - ScreenArea.Location.ToVector2());
+
+        public Vector2 ScreenPointToWorld(Vector2 screenPoint)
         {
-            /*
             RectangleF worldArea = GetWorldArea();
-            Vector2 mousePosition = GameInput.MousePosition;
-            Vector2 screenSize = ScreenArea.Size.ToVector2();
-
-            float distX = (mousePosition.X / screenSize.X) * worldArea.X;
-            float distY = (mousePosition.Y / screenSize.Y) * worldArea.Y;
-
-            return new Vector2(worldArea.TopLeft.X + distX, worldArea.TopLeft.Y + distY);
-            */
-            RectangleF worldArea = GetWorldArea();
-            Vector2 mouseInScreenArea = GameInput.MousePosition - ScreenArea.Location.ToVector2();
-            Vector2 mouseRelative = mouseInScreenArea / ScreenArea.Size();
-            return worldArea.TopLeft + worldArea.Size * mouseRelative;
+            Vector2 posRelative = screenPoint / ScreenArea.Size();
+            return worldArea.TopLeft + worldArea.Size * posRelative;
         }
 
         public Matrix GetMatrix()
@@ -96,6 +89,8 @@ namespace GameCore.Utility.Camera
             foreach (var mod in ValueModifiers) mod.Modify(ref values);
 
             values.Position -= ScreenArea.Location.ToVector2() / Scale;
+
+            if (PixelPerfectPosition) values.Position = new Vector2((int)values.Position.X, (int)values.Position.Y);
 
             return
                 Matrix.CreateTranslation(-values.Position.X, -values.Position.Y, 0f) *

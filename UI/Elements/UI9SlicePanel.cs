@@ -27,7 +27,6 @@ namespace GameCore.UI.Elements
         public int BorderBottom { get; set; }
         public bool DoFill { get; set; }
         public bool StretchToFill { get; set; }
-        public override bool EatsMouse => true;
 
         public UI9SlicePanel(ISprite sprite, int borderSize) : this(sprite, borderSize, Color.White) { }
         public UI9SlicePanel(ISprite sprite, int borderSize, Color color) : base(sprite, color, Vector4.One)

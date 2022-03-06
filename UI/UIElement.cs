@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace GameCore.UI
 {
+    // TODO: Implement correct IDisposable pattern? one where you call Dispose() in the finalizer unless it's been called elsewhere?
     public class UIElement : IDisposable
     {
         // only create an animator if it's needed by the element.
@@ -24,28 +25,25 @@ namespace GameCore.UI
         protected RectangleF _calculatedRect;
         protected bool _dirtyRect;
 
-        public bool IgnoreMouse { get; set; } = true;
-        public virtual bool EatsMouse => !IgnoreMouse;
+        public bool Active { get; set; } = true;
+        public bool ClickThrough { get; set; } = true;
         public bool DoesInputCheck { get; set; }
         public bool ForceInputUpdate { get; set; }
         protected event Action<UIElement> _onMouseEnter;
-        public event Action<UIElement> OnMouseEnter { add { _onMouseEnter += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onMouseEnter -= value; }}
+        public event Action<UIElement> OnMouseEnter { add { _onMouseEnter += value; DoesInputCheck = true; ClickThrough = false; } remove { _onMouseEnter -= value; }}
         protected event Action<UIElement> _onMouseExit;
-        public event Action<UIElement> OnMouseExit { add { _onMouseExit += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onMouseExit -= value; }}
+        public event Action<UIElement> OnMouseExit { add { _onMouseExit += value; DoesInputCheck = true; ClickThrough = false; } remove { _onMouseExit -= value; }}
         protected event Action<UIElement, Input.MouseInput> _onMouseDown;
-        public event Action<UIElement, Input.MouseInput> OnMouseDown { add { _onMouseDown += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onMouseDown -= value; }}
+        public event Action<UIElement, Input.MouseInput> OnMouseDown { add { _onMouseDown += value; DoesInputCheck = true; ClickThrough = false; } remove { _onMouseDown -= value; }}
         protected event Action<UIElement, Input.MouseInput> _onMousePressed;
-        public event Action<UIElement, Input.MouseInput> OnMousePressed { add { _onMousePressed += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onMousePressed -= value; }}
+        public event Action<UIElement, Input.MouseInput> OnMousePressed { add { _onMousePressed += value; DoesInputCheck = true; ClickThrough = false; } remove { _onMousePressed -= value; }}
         protected event Action<UIElement, Input.MouseInput> _onMouseReleased;
-        public event Action<UIElement, Input.MouseInput> OnMouseReleased { add { _onMouseReleased += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onMouseReleased -= value; }}
+        public event Action<UIElement, Input.MouseInput> OnMouseReleased { add { _onMouseReleased += value; DoesInputCheck = true; ClickThrough = false; } remove { _onMouseReleased -= value; }}
         protected event Action<UIElement> _onLeftClickElsewhere;
-        public event Action<UIElement> OnLeftClickElsewhere { add { _onLeftClickElsewhere += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onLeftClickElsewhere -= value; }}
+        public event Action<UIElement> OnLeftClickElsewhere { add { _onLeftClickElsewhere += value; DoesInputCheck = true; ClickThrough = false; } remove { _onLeftClickElsewhere -= value; }}
         protected event Action<UIElement> _onScroll;
-        public event Action<UIElement> OnScroll { add { _onScroll += value; DoesInputCheck = true; IgnoreMouse = false; } remove { _onScroll -= value; }}
-        /// <summary>
-        /// Also includes scrolling. Check OnMouseDown for MouseInput.ScrollUp or MouseInput.ScrollDown
-        /// </summary>
-
+        public event Action<UIElement> OnScroll { add { _onScroll += value; DoesInputCheck = true; ClickThrough = false; } remove { _onScroll -= value; }}
+        
         public UIElement()
         {
             Children = new List<UIElement>();
@@ -99,8 +97,7 @@ namespace GameCore.UI
 
             if (RectangleF.Intersection(CalculateRect(), ScissorTesting.CurrentScreenAreaFloat).Contains(GameInput.MousePosition))
             {
-                UIInputManager.MouseOverUIElement = EatsMouse;
-                if (!IgnoreMouse)
+                if (!ClickThrough)
                 {
                     UIInputManager.SetForemostElement(this);
                     if (ForceInputUpdate) UIInputManager.ForceInputCheck(this);
@@ -110,7 +107,7 @@ namespace GameCore.UI
             int count = Children.Count;
             for (int i = 0; i < count; i++)
             {
-                Children[i].Update();
+                if (Children[i].Active) Children[i].Update();
             }
 
             DoElsewhereCheck();
@@ -129,7 +126,7 @@ namespace GameCore.UI
             int count = Children.Count;
             for (int i = 0; i < count; i++)
             {
-                Children[i].Draw();
+                if (Children[i].Active) Children[i].Draw();
             }
         }
 
@@ -178,6 +175,7 @@ namespace GameCore.UI
 
         public virtual void Dispose()
         {
+            Active = false;
             foreach (var child in Children)
             {
                 child.Dispose();
@@ -187,11 +185,13 @@ namespace GameCore.UI
         private void DoIsDown(MouseInput input)
         {
             bool scroll = input == MouseInput.ScrollDown || input == MouseInput.ScrollUp;
-            
+
+            if (scroll) return;
+
             // if no click related functions then ignore
             if (_onMouseDown == null && _onMousePressed == null && _onMouseReleased == null) return;
 
-            if (GameInput.IsJustPressed(input, true) && !scroll) 
+            if (GameInput.IsJustPressed(input, true)) 
             {
                 UIInputManager.SetJustPressed(this, input);
             }

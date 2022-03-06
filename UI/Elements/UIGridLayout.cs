@@ -79,6 +79,8 @@ namespace GameCore.UI.Elements
             Vector2 perItem = vertical ? new Vector2(space / count, ChildSize.Y) : new Vector2(ChildSize.X, space / count);
             for (int i = 0; i < Children.Count; i++)
             {
+                if (!Children[i].Active) continue;
+
                 if (vertical) Children[i].Rect.AnchorTopLeft(perItem.X, perItem.Y, Padding.Left + lineItem * (perItem.X + Spacing.X), Padding.Top + line * (perItem.Y + Spacing.Y));
                 else Children[i].Rect.AnchorTopLeft(perItem.X, perItem.Y, Padding.Left + line * (perItem.X + Spacing.X), Padding.Top + lineItem * (perItem.Y + Spacing.Y));
 

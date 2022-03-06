@@ -14,11 +14,11 @@ namespace GameCore.Input
     /// </summary>
     public static class GameInput
     {
-        private const int KEY_REPEAT_DELAY = 24; 
-        private const int KEY_REPEAT_EVERY_X_FRAMES = 2; 
+        private const float KEY_REPEAT_DELAY = 0.4f; 
+        private const float KEY_REPEAT_TIME = 0.03f; 
 
         public static Dictionary<string, InputBinding> Controls;
-        private static Dictionary<Keys, int> _keyFrameCount;
+        private static Dictionary<Keys, float> _keyTimes;
 
         public static KeyboardState PreviousKeyState { get; private set; }
         public static KeyboardState CurrentKeyState { get; private set; }
@@ -28,12 +28,13 @@ namespace GameCore.Input
         public static int DeltaScroll => CurrentMouseState.ScrollWheelValue - PreviousMouseState.ScrollWheelValue;
         public static int DeltaScrollHorizontal => CurrentMouseState.HorizontalScrollWheelValue - PreviousMouseState.HorizontalScrollWheelValue;
 
+        public static bool KeyboardEatenByTextInput { get; set; }
         public static Vector2 MousePosition => new Vector2(CurrentMouseState.X, CurrentMouseState.Y);
 
         static GameInput()
         {
             Controls = new Dictionary<string, InputBinding>();
-            _keyFrameCount = new Dictionary<Keys, int>();
+            _keyTimes = new Dictionary<Keys, float>();
         }
 
         /// <summary>
@@ -51,14 +52,16 @@ namespace GameCore.Input
             CurrentMouseState = Mouse.GetState();
         }
 
-        public static void RegisterControl(string name, Keys defaultKeyboard)
+        public static InputBinding RegisterControl(string name, Keys defaultKeyboard)
         {
             Controls[name] = new InputBinding(defaultKeyboard);
+            return Controls[name];
         }
 
-        public static void RegisterControl(string name, MouseInput defaultMouse)
+        public static InputBinding RegisterControl(string name, MouseInput defaultMouse)
         {
             Controls[name] = new InputBinding(defaultMouse);
+            return Controls[name];
         }
 
         public static void UnregisterControl(string name)
@@ -68,36 +71,49 @@ namespace GameCore.Input
 
         public static bool IsDown(Keys key)
         {
+            if (KeyboardEatenByTextInput) return false;
             return CurrentKeyState.IsKeyDown(key);
         }
 
         public static bool IsUp(Keys key)
         {
+            if (KeyboardEatenByTextInput) return true;
             return CurrentKeyState.IsKeyUp(key);
         }
 
         public static bool IsJustPressed(Keys key)
         {
+            if (KeyboardEatenByTextInput) return false;
             return PreviousKeyState.IsKeyUp(key) && CurrentKeyState.IsKeyDown(key);
+        }
+
+        public static bool IsJustReleased(Keys key)
+        {
+            if (KeyboardEatenByTextInput) return false;
+            return CurrentKeyState.IsKeyUp(key) && PreviousKeyState.IsKeyDown(key);
         }
 
         public static bool IsTextInputPressed(Keys key)
         {
-            if (_keyFrameCount.TryGetValue(key, out int result))
+            if (_keyTimes.TryGetValue(key, out float result))
             {
                 if (!IsDown(key))
                 {
-                    _keyFrameCount.Remove(key);
+                    _keyTimes.Remove(key);
                     return false;
                 }
 
-                _keyFrameCount[key] = ++result;
-                return (result > KEY_REPEAT_DELAY && result % KEY_REPEAT_EVERY_X_FRAMES == 0);
+                _keyTimes[key] = result + Time.RawDeltaTime;
+                if (_keyTimes[key] > KEY_REPEAT_DELAY + KEY_REPEAT_TIME)
+                {
+                    _keyTimes[key] = _keyTimes[key] - KEY_REPEAT_TIME;
+                    return true;
+                }
             }
 
             if (IsDown(key))
             {
-                _keyFrameCount.Add(key, 1);
+                _keyTimes.Add(key, 1);
                 return true;
             }
 

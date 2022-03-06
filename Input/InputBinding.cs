@@ -40,12 +40,12 @@ namespace GameCore.Input
             return _isMouse ? IsDown(GameInput.CurrentMouseState) : IsDown(GameInput.CurrentKeyState);
         }
 
-        public bool IsDown(KeyboardState keyboard)
+        internal bool IsDown(KeyboardState keyboard)
         {
             return keyboard.IsKeyDown((Keys)_assignedValueKeyboard);
         }
 
-        public bool IsDown(MouseState mouse)
+        internal bool IsDown(MouseState mouse)
         {
             MouseInput button = (MouseInput)_assignedValueKeyboard;
             switch (button)
@@ -73,12 +73,12 @@ namespace GameCore.Input
             return _isMouse ? IsUp(GameInput.CurrentMouseState) : IsUp(GameInput.CurrentKeyState);
         }
 
-        public bool IsUp(KeyboardState keyboard)
+        internal bool IsUp(KeyboardState keyboard)
         {
             return keyboard.IsKeyUp((Keys)_assignedValueKeyboard);
         }
 
-        public bool IsUp(MouseState mouse)
+        internal bool IsUp(MouseState mouse)
         {
             MouseInput button = (MouseInput)_assignedValueKeyboard;
             switch (button)
@@ -106,12 +106,12 @@ namespace GameCore.Input
             return _isMouse ? IsJustPressed(GameInput.PreviousMouseState, GameInput.CurrentMouseState) : IsJustPressed(GameInput.PreviousKeyState, GameInput.CurrentKeyState);
         }
 
-        public bool IsJustPressed(KeyboardState old, KeyboardState current)
+        internal bool IsJustPressed(KeyboardState old, KeyboardState current)
         {
             return IsUp(old) && IsDown(current);
         }
 
-        public bool IsJustPressed(MouseState old, MouseState current)
+        internal bool IsJustPressed(MouseState old, MouseState current)
         {
             return IsUp(old) && IsDown(current);
         }
@@ -121,12 +121,12 @@ namespace GameCore.Input
             return _isMouse ? IsJustReleased(GameInput.PreviousMouseState, GameInput.CurrentMouseState) : IsJustReleased(GameInput.PreviousKeyState, GameInput.CurrentKeyState);
         }
 
-        public bool IsJustReleased(KeyboardState old, KeyboardState current)
+        internal bool IsJustReleased(KeyboardState old, KeyboardState current)
         {
             return IsDown(old) && IsUp(current);
         }
 
-        public bool IsJustReleased(MouseState old, MouseState current)
+        internal bool IsJustReleased(MouseState old, MouseState current)
         {
             return IsDown(old) && IsUp(current);
         }
@@ -136,12 +136,12 @@ namespace GameCore.Input
             return GetPressValue(GameInput.CurrentKeyState);
         }
 
-        public float GetPressValue(KeyboardState keyboard)
+        internal float GetPressValue(KeyboardState keyboard)
         {
             return IsDown(keyboard) ? 1f : 0f;
         }
 
-        public float GetPressValue(MouseState mouse)
+        internal float GetPressValue(MouseState mouse)
         {
             MouseInput myValue = (MouseInput)_assignedValueKeyboard;
             switch (myValue)

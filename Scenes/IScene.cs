@@ -7,6 +7,7 @@ namespace GameCore
 {
     public interface IScene
     {
+        MiscSystemHandler MiscSystemHandler { get; }
         void Load();
         void Unload();
         void Update();

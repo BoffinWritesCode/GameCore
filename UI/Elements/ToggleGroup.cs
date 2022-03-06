@@ -27,16 +27,28 @@ namespace GameCore.UI.Elements
 
         public void RemoveToggle(UIToggle toggle)
         {
-            _toggles.Add(toggle);
+            _toggles.Remove(toggle);
+        }
+
+        public void UntoggleCurrent()
+        {
+            if (_currentlySelected != null) _currentlySelected.IsSelected = false;
+            _currentlySelected = null;
+        }
+
+        public void SetAsToggled(UIToggle toggle)
+        {
+            _currentlySelected = toggle;
         }
 
         public void ToggleTo(UIToggle toggle)
         {
-            if (_currentlySelected != null) _currentlySelected.IsSelected = false;
+            toggle.IsSelected = true;
+        }
 
-            _currentlySelected = toggle;
-
-            _currentlySelected.IsSelected = true;
+        public void UntoggleAll()
+        {
+            foreach (var toggle in _toggles) toggle.IsSelected = false;
         }
     }
 }

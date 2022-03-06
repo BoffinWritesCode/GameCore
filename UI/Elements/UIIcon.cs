@@ -19,6 +19,13 @@ namespace GameCore.UI.Elements
         public UIIcon(ISprite sprite, Color color) : base(sprite, color, Vector4.One) { }
         public UIIcon(ISprite sprite, Color color, Vector4 mult) : base(sprite, color, mult) { }
 
+        public void CenterOrigin()
+        {
+            if (Sprite == null) return;
+
+            Origin = Sprite.GetTextureInfo().GetSourceNoNull().Size.ToVector2() * 0.5f;
+        }
+
         public override void Draw()
         {
             TextureInfo info = Sprite.GetTextureInfo();
@@ -26,8 +33,6 @@ namespace GameCore.UI.Elements
 
             // get containing area to position icon
             RectangleF rect = CalculateRect();
-
-            //Engine.SpriteBatch.Draw(info, iconArea, Color.MultipliedBy(ColorMultiplier), Rotation, Origin);
 
             Engine.SpriteBatch.Draw(info.Texture, rect.Center, info.Source, Color.MultipliedBy(ColorMultiplier), Rotation, Origin, ImageScale, SpriteEffects.None, 0f);
 

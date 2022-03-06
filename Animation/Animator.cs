@@ -27,6 +27,15 @@ namespace GameCore.Animation
 
         public void AddDriver(IValueDriver driver) => _drivers.Add(driver);
 
+        public T GetDriver<T>() where T : class, IValueDriver
+        {
+            foreach (IValueDriver driver in _drivers)
+            {
+                if (driver is T cast) return cast;
+            }
+            return null;
+        }
+
         public void SetState(int index, bool cancelTransition = true)
         {
             if (cancelTransition)

@@ -48,10 +48,12 @@ namespace GameCore.UI.Elements
         public Padding Padding { get; set; }
         public TextAnchor Anchor { get; set; }
         public Vector2 TextOffset { get; set; }
+        public Vector2 RotationOrigin { get; set; } = new Vector2(0.5f);
         public Vector2 DropShadowOffset { get; set; }
         public float DropShadowSmoothing { get; set; }
         public Color DropShadowColor { get; set; }
         public Effect Effect { get; set; }
+        public float Rotation { get; set; }
 
         public UIText(BitmapFont font, string text) : this(font, text, Color.White) { }
         public UIText(BitmapFont font, string text, Color color) : this(font, text, color, null) { }
@@ -121,6 +123,7 @@ namespace GameCore.UI.Elements
             
                 var raster = ScissorTesting.SetScissorAndGetRasterizer();
 
+                // TODO: Allow this to be customised. The effect could be anything, not specifically the SDF shader, so ensure that's okay.
                 Effect.Parameters["shadowOffset"].SetValue(DropShadowOffset);
                 Effect.Parameters["shadowSmoothing"].SetValue(DropShadowSmoothing);
                 Effect.Parameters["shadowColor"].SetValue(DropShadowColor.ToVector4() * ColorMultiplier);
@@ -143,7 +146,11 @@ namespace GameCore.UI.Elements
 
         protected virtual void DrawMyText()
         {
-            // Engine.SpriteBatch.DrawString(Font, Text, GetDrawPosition().ToPoint().ToVector2(), Color.MultipliedBy(ColorMultiplier), 0f, GetOriginFromAnchor(), Scale, SpriteEffects.None, 0f);
+            // get padding modified area
+            Vector2 size = Font.MeasureString(Text);
+            Vector2 pos = GetDrawPosition();
+
+            Engine.SpriteBatch.DrawString(Font, Text, pos, Color.MultipliedBy(ColorMultiplier), Rotation, size * RotationOrigin, Scale, SpriteEffects.None, 0f);
         }
 
         protected Vector2 GetDrawPosition()
@@ -151,36 +158,15 @@ namespace GameCore.UI.Elements
             // get padding modified area
             RectangleF area = CalculateRect();
             Padding.ModifyWith(ref area, Padding);
-
-            Vector2 size = Font.MeasureString(Text) * Scale;
-            switch (Anchor)
-            {
-                default:
-                case TextAnchor.TopLeft:
-                    return TextOffset + area.TopLeft;
-                case TextAnchor.TopMiddle:
-                    return TextOffset + new Vector2(area.Center.X - size.X * 0.5f, area.Top);
-                case TextAnchor.TopRight:
-                    return TextOffset + new Vector2(area.Right - size.X, area.Top);
-                case TextAnchor.MiddleLeft:
-                    return TextOffset + new Vector2(area.Left, area.Center.Y - size.Y * 0.5f);
-                case TextAnchor.Center:
-                    return TextOffset + new Vector2(area.Center.X - size.X * 0.5f, area.Center.Y - size.Y * 0.5f);
-                case TextAnchor.MiddleRight:
-                    return TextOffset + new Vector2(area.Right - size.X, area.Center.Y - size.Y * 0.5f);
-                case TextAnchor.BottomLeft:
-                    return TextOffset + new Vector2(area.Left, area.Bottom - size.Y);
-                case TextAnchor.BottomMiddle:
-                    return TextOffset + new Vector2(area.Center.X - size.X * 0.5f, area.Bottom - size.Y);
-                case TextAnchor.BottomRight:
-                    return TextOffset + new Vector2(area.Right - size.X, area.Bottom - size.Y);
-            }
+            Vector2 size = Font.MeasureString(Text);
+            Vector2 origin = GetOriginFromAnchor();
+            return (area.TopLeft + area.Size * origin) + TextOffset + size * (RotationOrigin - origin) * Scale;
         }
 
         protected Vector2 GetOriginFromAnchor()
         {
-             return Vector2.Zero;
-            /*
+            //return Vector2.Zero;
+
             switch (Anchor)
             {
                 default:
@@ -202,7 +188,7 @@ namespace GameCore.UI.Elements
                     return new Vector2(0.5f, 1f);
                 case TextAnchor.BottomRight:
                     return new Vector2(1f, 1f);
-            }*/
+            }
         }
     }
 }

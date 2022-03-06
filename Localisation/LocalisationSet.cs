@@ -12,6 +12,8 @@ namespace GameCore.Localisation
         private Dictionary<string, Dictionary<string, string>> _languages;
         private Dictionary<string, string> _fallbackLanguageDict;
         private Dictionary<string, string> _currentLanguageDict;
+        private string _fileLoc;
+        private string _fallbackLang;
 
         public string CurrentLanguage { get; private set; }
         public List<string> AvailableLanguages { get; private set; }
@@ -27,17 +29,27 @@ namespace GameCore.Localisation
             AvailableLanguages = new List<string>();
             _languages = new Dictionary<string, Dictionary<string, string>>();
 
+            _fileLoc = fileLocation;
+            _fallbackLang = fallbackLanguage;
+            Reload();
+        }
+        
+        public void Reload()
+        {
+            AvailableLanguages.Clear();
+            _languages.Clear();
+
             JsonDocumentOptions options = new JsonDocumentOptions()
             {
                 CommentHandling = JsonCommentHandling.Skip
             };
 
-            if (!File.Exists(fileLocation))
+            if (!File.Exists(_fileLoc))
             {
-                throw new FileNotFoundException($"File not found! {fileLocation}");
+                throw new FileNotFoundException($"File not found! {_fileLoc}");
             }
 
-            using (Stream file = File.Open(fileLocation, FileMode.Open))
+            using (Stream file = File.Open(_fileLoc, FileMode.Open))
             {
                 using (JsonDocument document = JsonDocument.Parse(file, options))
                 {
@@ -52,12 +64,12 @@ namespace GameCore.Localisation
                         _languages.Add(langId, keyValueDict);
                         AvailableLanguages.Add(langId);
 
-                        if (langId == fallbackLanguage)
+                        if (langId == _fallbackLang)
                         {
                             _fallbackLanguageDict = keyValueDict;
                         }
                     }
-                } 
+                }
             }
         }
 

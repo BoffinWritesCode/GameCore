@@ -34,7 +34,29 @@ namespace GameCore.UI.Elements
             _layoutMode = mode;   
         }
 
-        // FIXME: Mixing MinSize and MaxSize constraints causes issues. Needed?
+        protected void ChildrenControlTheirSizeUpdate(Axis axis, float spacing)
+        {
+            RectangleF rect = CalculateRect();
+            float currentPos = axis == Axis.Horizontal ? Padding.Left : Padding.Top;
+            for (int i = 0; i < Children.Count; i++)
+            {
+                if (!Children[i].Active) continue;
+
+                // gets the size based on the child's rect and this as the parent.
+                // the child will still have it's alternate axis sized changed, but their main axis size will stay as specified.
+                RectangleF childAttemptedSize = Children[i].Rect.Calculate(rect);
+
+                switch (axis)
+                {
+                    case Axis.Horizontal: Children[i].Rect.AnchorTopLeft(childAttemptedSize.Width, rect.Height - Padding.Top - Padding.Bottom, currentPos, Padding.Top); break;
+                    case Axis.Vertical: Children[i].Rect.AnchorTopLeft(rect.Width - Padding.Left - Padding.Right, childAttemptedSize.Height, Padding.Left, currentPos); break;
+                }
+
+                currentPos += (axis == Axis.Horizontal ? childAttemptedSize.Width : childAttemptedSize.Height) + spacing;
+            }
+        }
+
+        // TODO: Mixing MinSize and MaxSize constraints causes issues. Needed?
         protected void StretchToFitUpdate(Axis axis, float spacing)
         {
             RectangleF rect = CalculateRect();
@@ -49,6 +71,8 @@ namespace GameCore.UI.Elements
             Dictionary<int, float> constrainedIndices = new Dictionary<int, float>();
             for (int i = 0; i < Children.Count; i++)
             {
+                if (!Children[i].Active) continue;
+
                 switch (axis)
                 {
                     case Axis.Horizontal: Children[i].Rect.AnchorTopLeft(elementSize, rect.Height - Padding.Top - Padding.Bottom, currentValue, Padding.Top); break;
@@ -99,6 +123,8 @@ namespace GameCore.UI.Elements
             float currentPos = axis == Axis.Horizontal ? Padding.Left : Padding.Top;
             foreach (UIElement child in Children)
             {
+                if (!child.Active) continue;
+
                 switch (axis)
                 {
                     case Axis.Horizontal: child.Rect.AnchorTopLeft(size, rect.Height - Padding.Top - Padding.Bottom, currentPos, Padding.Top); break;
@@ -136,6 +162,9 @@ namespace GameCore.UI.Elements
                     break;
                 case AxisLayoutMode.SetChildSize:
                     SetSizeUpdate(MyAxis, ChildSize, Spacing);
+                    break;
+                case AxisLayoutMode.ChildrenControlTheirSize:
+                    ChildrenControlTheirSizeUpdate(MyAxis, Spacing);
                     break;
             }
 

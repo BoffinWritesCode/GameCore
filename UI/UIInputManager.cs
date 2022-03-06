@@ -88,7 +88,7 @@ namespace GameCore.UI
                 _currentData.LastForemost?.HandleMouseNotOver(changed);
             _foremostElement?.HandleMouseOver(changed);
 
-            if (_currentClicked != null && GameInput.IsJustReleased(_currentButton, true))
+            if (_currentClicked != null && _currentClicked.CalculateRect().Contains(GameInput.MousePosition) && GameInput.IsJustReleased(_currentButton, true))
             {
                 _currentData.LastClicked = _currentClicked;
                 _currentClicked = null;
@@ -104,6 +104,9 @@ namespace GameCore.UI
             _foremostElement = null;
         }
 
+        /// <summary>
+        /// Clears any input parents that haven't been updated.
+        /// </summary>
         public static void ClearUnupdatedParents()
         {
             foreach (var kvp in _parentsChecked)

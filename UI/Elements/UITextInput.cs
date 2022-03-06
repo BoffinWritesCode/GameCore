@@ -47,9 +47,12 @@ namespace GameCore.UI.Elements
             set { _placerholderLocalised = null; _placeholderText = value; }
         }
 
+        protected string DrawText => (_builder.Length == 0 && !_isSelected) ? PlaceholderText : _builder.ToString();
+
         public event Action<string> OnValueChanged;
 
         public bool Multiline { get; set; } = false;
+        public int MaximumLength { get; set; } = 40;
 
         public UITextInput(BitmapFont font, string placeholderText, bool doEnableEvents = true) : base(font, "")
         {
@@ -83,13 +86,16 @@ namespace GameCore.UI.Elements
 
         protected override void DrawMyText()
         {
-            bool usePlaceholder = _builder.Length == 0 && !_isSelected;
-            string text = usePlaceholder ? PlaceholderText : _builder.ToString();
+            string text = DrawText;
 
-            Vector2 tlPos = GetDrawPosition().ToPoint().ToVector2();
+            // get padding modified area
+            RectangleF area = CalculateRect();
+            Padding.ModifyWith(ref area, Padding);
+            Vector2 size = Font.MeasureString(text);
             Vector2 origin = GetOriginFromAnchor();
+            Vector2 pos = (area.TopLeft + area.Size * origin) + TextOffset + size * (RotationOrigin - origin) * Scale;
 
-            // Engine.SpriteBatch.DrawString(Font, text, tlPos, usePlaceholder ? PlaceholderColor.MultipliedBy(ColorMultiplier) : Color.MultipliedBy(ColorMultiplier), 0f, origin, Scale, SpriteEffects.None, 0f);
+            Engine.SpriteBatch.DrawString(Font, text, pos, (_builder.Length == 0 && !_isSelected) ? PlaceholderColor.MultipliedBy(ColorMultiplier) : Color.MultipliedBy(ColorMultiplier), Rotation, size * RotationOrigin, Scale, SpriteEffects.None, 0f);
         }
 
         public override void Draw()
@@ -98,43 +104,46 @@ namespace GameCore.UI.Elements
 
             if (!_isSelected) return;
 
-            DrawSelection();
-            DrawCursor();
-        }
+            RectangleF area = CalculateRect();
+            Padding.ModifyWith(ref area, Padding);
+            Vector2 size = Font.MeasureString(DrawText);
+            size.Y = Font.LineHeight;
+            Vector2 origin = GetOriginFromAnchor();
+            Vector2 pos = (area.TopLeft + area.Size * origin) + TextOffset + size * (RotationOrigin - origin) * Scale;
 
-        protected void DrawCursor()
-        {
+            // draw selection
+            if (_selectionEnd1 != -1)
+            {
+                int min = Math.Min(_selectionEnd1, _selectionEnd2);
+                int max = Math.Max(_selectionEnd1, _selectionEnd2);
+
+                string start = _builder.ToString(0, min);
+                Vector2 startSize = Font.MeasureString(start);
+                startSize.Y = Font.LineHeight * 0.5f;
+                string end = _builder.ToString(0, max);
+                Vector2 endSize = Font.MeasureString(end);
+                endSize.Y = Font.LineHeight * 0.5f;
+                
+                Vector2 selectionCenter = (area.TopLeft + area.Size * origin) + TextOffset + (startSize + (endSize - startSize) * 0.5f) * Scale;
+                selectionCenter = selectionCenter.RotateMeAround(pos, Rotation);
+
+                Vector2 scale = new Vector2(endSize.X - startSize.X, Font.LineHeight) * Scale;
+
+                Engine.SpriteBatch.Draw(GraphicsExtras.PixelSprite, selectionCenter, Color * 0.2f, Rotation, new Vector2(0.5f), scale);
+            }
+
+            // draw cursor
             bool drawBlink = _forceCursorDraw > 0 || (Time.TotalTime % 1f) > 0.5f;
-            if (!drawBlink) return;
-            
-            _forceCursorDraw--;
-            
-            Vector2 tlPos = GetDrawPosition().ToPoint().ToVector2();
-            // Vector2 origin = GetOriginFromAnchor();
-            string before = _builder.ToString(0, _cursorLocation);
-            Vector2 measure = Font.MeasureString(before) * Scale;
-            int cursorX = (int)(tlPos.X + measure.X);
-            if (_cursorLocation > 0) cursorX -= 2;
-
-            Engine.SpriteBatch.Draw(GraphicsExtras.PixelSprite.GetTextureInfo(), new Rectangle(cursorX, (int)(tlPos.Y), 2, (int)(Font.LineHeight * Scale)), Color);
-        }
-
-        protected void DrawSelection()
-        {
-            Vector2 tlPos = GetDrawPosition().ToPoint().ToVector2();
-            // Vector2 origin = GetOriginFromAnchor();
-
-            if (_selectionEnd1 == -1) return;
-
-            int min = Math.Min(_selectionEnd1, _selectionEnd2);
-            int max = Math.Max(_selectionEnd1, _selectionEnd2);
-
-            string start = _builder.ToString(0, min);
-            Vector2 startSize = Font.MeasureString(start) * Scale;
-            string end = _builder.ToString(0, max);
-            Vector2 endSize = Font.MeasureString(end) * Scale;
-
-            Engine.SpriteBatch.Draw(GraphicsExtras.PixelSprite.GetTextureInfo(), new Rectangle((int)(tlPos.X + startSize.X), (int)tlPos.Y, (int)(endSize.X - startSize.X), (int)(Font.LineHeight * Scale)), Color * 0.2f);
+            if (drawBlink)
+            {
+                _forceCursorDraw--;
+                string before = _builder.ToString(0, _cursorLocation);
+                Vector2 cursorMeasure = Font.MeasureString(before);
+                cursorMeasure.Y = Font.LineHeight * 0.5f;
+                Vector2 cursorCenter = (area.TopLeft + area.Size * origin) + TextOffset + cursorMeasure * Scale;
+                cursorCenter = cursorCenter.RotateMeAround(pos, Rotation);
+                Engine.SpriteBatch.Draw(GraphicsExtras.PixelSprite, cursorCenter, Color, Rotation, new Vector2(0.5f), new Vector2(2f, Font.LineHeight * Scale * 0.8f));
+            }
         }
 
         public override void Update()
@@ -247,7 +256,12 @@ namespace GameCore.UI.Elements
             }
 
             _builder.Insert(_cursorLocation, value);
+            if (_builder.Length > MaximumLength)
+            {
+                _builder.Remove(MaximumLength, _builder.Length - MaximumLength);
+            }
             _cursorLocation += value.Length;
+            ValidateCursorLocation(_builder);
 
             OnTextUpdate();
             
